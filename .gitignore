@@ -9,7 +9,3 @@ src/gerado/
 # Saída da ferramenta de mascaramento (só faz sentido com dados reais).
 amostra/
 
-# Documentos de trabalho ainda não publicados.
-DIAGNOSTICO.md
-PLANO.md
-LEIA-ME.md

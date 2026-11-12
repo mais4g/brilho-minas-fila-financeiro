@@ -47,6 +47,16 @@ export function VisaoVendedor({ dados }: { dados: DadosVendedor }) {
 
   return (
     <div className="celular">
+      <nav className="abas-inferiores" aria-label="Seções">
+        <button type="button" className="aba-inferior" aria-current={aba === 'pedidos' ? 'page' : undefined} onClick={() => setAba('pedidos')}>
+          <IconePedidos />
+          Meus pedidos
+        </button>
+        <button type="button" className="aba-inferior" aria-current={aba === 'clientes' ? 'page' : undefined} onClick={() => setAba('clientes')}>
+          <IconeClientes />
+          Meus clientes
+        </button>
+      </nav>
       {aba === 'pedidos' ? (
         <section aria-labelledby="titulo-vendedor">
           <div className="celular__cabecalho">
@@ -93,16 +103,6 @@ export function VisaoVendedor({ dados }: { dados: DadosVendedor }) {
         <Clientes clientes={dados.clientes} />
       )}
 
-      <nav className="abas-inferiores" aria-label="Seções">
-        <button type="button" className="aba-inferior" aria-current={aba === 'pedidos' ? 'page' : undefined} onClick={() => setAba('pedidos')}>
-          <IconePedidos />
-          Meus pedidos
-        </button>
-        <button type="button" className="aba-inferior" aria-current={aba === 'clientes' ? 'page' : undefined} onClick={() => setAba('clientes')}>
-          <IconeClientes />
-          Meus clientes
-        </button>
-      </nav>
     </div>
   );
 }

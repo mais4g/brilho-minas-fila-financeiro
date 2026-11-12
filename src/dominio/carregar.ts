@@ -148,6 +148,24 @@ export function carregarBase(brutos: DadosBrutos, dataReferencia: string): Base 
     }
   }
 
+  // Nome quase igual ao de outro cliente, sem o mesmo CNPJ para confirmar
+  // (ex.: "Hotel Savasi Plaza" x "Hotel Savassi Plaza"). Não junta: só avisa.
+  const lista = [...clientes.values()];
+  for (const [i, a] of lista.entries()) {
+    for (const b of lista.slice(i + 1)) {
+      if (grupoDoCliente.get(a.id) === grupoDoCliente.get(b.id)) continue;
+      const [na, nb] = [nomeComparavel(a.razao_social), nomeComparavel(b.razao_social)];
+      if (na.length >= 8 && distancia(na, nb) <= 2) {
+        anomalias.push({
+          arquivo: 'clientes',
+          registro: `${a.id} ${a.razao_social} / ${b.id} ${b.razao_social}`,
+          descricao: 'nomes quase iguais (provável o mesmo cliente digitado de outro jeito), sem CNPJ igual para confirmar',
+          tratamento: 'não são juntados automaticamente; a equipe confere e corrige o cadastro',
+        });
+      }
+    }
+  }
+
   // ---- Títulos --------------------------------------------------------------
   const titulosDoCliente = new Map<string, Titulo[]>();
   for (const t of titulos) {
@@ -239,6 +257,32 @@ function descreverDuplicidade(membros: Cliente[]): string {
     nomes.size > 1 ? `, nome digitado de jeitos diferentes (${[...nomes].map((n) => `"${n}"`).join(' / ')})` : '',
     `; limites diferentes (${membros.map((m) => m.limite_credito).join(' e ')})`,
   ].join('');
+}
+
+/** Minúsculas, sem acento, sem "LTDA/ME/EIRELI" e sem espaços repetidos. */
+function nomeComparavel(nome: string): string {
+  return nome
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\b(ltda|me|eireli|epp|sa)\b/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+/** Distância de edição (Levenshtein): quantas letras trocar, pôr ou tirar. */
+function distancia(a: string, b: string): number {
+  if (Math.abs(a.length - b.length) > 2) return 99;
+  let anterior = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    const atual = [i];
+    for (let j = 1; j <= b.length; j++) {
+      atual[j] = Math.min((anterior[j] ?? 0) + 1, (atual[j - 1] ?? 0) + 1, (anterior[j - 1] ?? 0) + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+    anterior = atual;
+  }
+  return anterior[b.length] ?? 99;
 }
 
 export function valorDosItens(p: Pedido): number {

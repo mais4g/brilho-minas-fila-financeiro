@@ -11,7 +11,8 @@ O que está garantido **por teste automatizado** é dito como tal. O resto foi c
 | Marta | ![](prints/marta-claro.png) | ![](prints/marta-escuro.png) |
 | Vendedora | ![](prints/vendedor-pedidos-claro.png) | ![](prints/vendedor-pedidos-escuro.png) |
 
-- **Segue o sistema por padrão** (`prefers-color-scheme`). O seletor **Tema** no topo permite fixar Claro ou Escuro, e a escolha fica salva no navegador.
+- **Segue o sistema por padrão** (`prefers-color-scheme`). O **botão de lua/sol** no canto superior direito troca entre claro e escuro, e a escolha fica salva no navegador.
+- **O botão diz o que faz, não o estado:** o nome acessível é "Usar tema escuro" ou "Usar tema claro", que é o padrão para botões de alternar. É só um ícone, mas tem nome para o leitor de tela e dica ao passar o mouse.
 - **Sem flash do tema errado:** o tema é aplicado antes de a tela ser desenhada.
 - **Se o navegador não deixar salvar** (aba anônima, arquivo aberto do disco), a tela funciona igual, só não lembra a escolha.
 - **Identidade visual:** a do Divos da IA. Bordô como cor principal, fundo levemente rosado, Playfair Display nos títulos, Inter no texto e JetBrains Mono em números de pedido e boleto. O escuro é derivado dela: as mesmas cores, clareadas até passarem no contraste.
@@ -24,7 +25,7 @@ O que está garantido **por teste automatizado** é dito como tal. O resto foi c
 - **Texto: 4,5:1 ou mais** (critério 1.4.3). São 29 pares por tema: texto normal e suave sobre cada fundo, cada cor de status sobre o próprio fundo, botões, a linha selecionada e a linha sob o cursor.
 - **Elementos gráficos e bordas de controles: 3:1 ou mais** (critério 1.4.11). São 11 pares por tema: borda do campo de busca e dos seletores, contorno de foco, partes da barra de crédito e marcadores de status.
 
-O par mais apertado é a parte da barra que representa a dívida, com 3,36:1 no claro e 3,81:1 no escuro. Quem mudar uma cor e quebrar o contraste vê o teste falhar no CI.
+Hoje, o par mais apertado é a parte da barra que representa a dívida, com 3,36:1 no claro e 3,81:1 no escuro. Quem mudar uma cor e quebrar o contraste vê o teste falhar no CI.
 
 **Um caso que o teste pegou no desenho:** no protótipo, a borda do campo de busca usava a cor das linhas divisórias, com cerca de 1,5:1. Para quem enxerga pouco, o campo "some" da tela. A borda passou a ter uma cor própria (`controle`), com 4,1:1.
 
@@ -37,6 +38,7 @@ O par mais apertado é a parte da barra que representa a dívida, com 3,36:1 no 
 ## Teclado e foco
 
 - **Tudo funciona só com o teclado.** Linhas da fila, filtros, abas do celular e botões são `<button>` de verdade, e nenhum `div` se finge de botão. A ordem de tabulação segue a ordem visual.
+- **As abas do vendedor vêm antes do conteúdo no código.** No computador elas aparecem no topo; no celular ficam presas embaixo, ao alcance do polegar. Assim, quem usa teclado ou leitor de tela chega a elas logo, sem atravessar a página inteira.
 - **Foco sempre visível** (2.4.7 e 2.4.11): contorno azul de 3px, com contraste testado nos dois temas. Ele aparece com teclado e não aparece com clique de mouse.
 - **"Pular para o conteúdo"** é o primeiro item do Tab (2.4.1): pula o cabeçalho e os seletores.
 - **Gerenciamento de foco:** em tela estreita, o detalhe do pedido fica abaixo da lista. Ao escolher um pedido, o foco vai para o título do detalhe, e quem usa teclado ou leitor de tela não precisa caçar onde ele abriu.
@@ -67,7 +69,8 @@ O par mais apertado é a parte da barra que representa a dívida, com 3,36:1 no 
 - **Sem rolagem lateral em 320px de largura** (1.4.10):
   - a fila deixa de ser uma grade e empilha em cada linha, por *container query* (depende do espaço da lista, não da janela);
   - o detalhe passa para baixo da lista;
-  - no celular, os rótulos "Tema" e "Ver como" saem da vista, mas continuam nos controles para o leitor de tela.
+  - no celular, o rótulo "Ver como" sai da vista, mas continua no controle para o leitor de tela;
+  - a visão do vendedor também se adapta para cima: no computador, os cartões ficam em colunas e as abas vão para o topo.
 - **Alvos de toque com pelo menos 44px** (acima do 2.5.8, que pede 24px): botões, filtros, seletores, busca e as abas de baixo, que têm 68px de altura e ficam no alcance do polegar.
 - **Nomes longos quebram em até 2 linhas**, em vez de virar "RE...". No protótipo, "RESTAURANTE SABOR DE MINAS LTDA" aparecia cortado.
 

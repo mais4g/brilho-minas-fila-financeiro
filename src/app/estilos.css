@@ -146,23 +146,20 @@ button {
   margin: 0 auto;
   padding: 0.5rem 1rem;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem 1.5rem;
-}
-
-.topo__conteudo--estreito {
-  max-width: 40rem;
+  gap: 1rem;
 }
 
 .marca {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  min-width: 0;
 }
 
 .marca__simbolo {
+  flex-shrink: 0;
   width: 2rem;
   height: 2rem;
   border-radius: 0.5rem;
@@ -176,6 +173,7 @@ button {
   font-family: var(--fonte-titulo);
   font-weight: 700;
   font-size: 1.125rem;
+  white-space: nowrap;
 }
 
 .marca__secao {
@@ -183,43 +181,80 @@ button {
   border-left: 1px solid var(--linha);
   color: var(--texto-suave);
   font-weight: 500;
-}
-
-.topo__controles {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 1rem;
-}
-
-.topo__data {
-  color: var(--texto-suave);
-  font-size: 0.875rem;
-}
-
-.controle {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.controle__rotulo {
-  font-size: 0.8125rem;
-  color: var(--texto-suave);
   white-space: nowrap;
 }
 
-.controle__campo {
-  min-height: 2.75rem;
-  max-width: 100%;
-  padding: 0 0.75rem;
-  border: 1px solid var(--controle);
-  border-radius: 0.5rem;
-  background: var(--superficie);
+/* Canto direito, discreto: data, "Ver como" (ferramenta de demonstração, não
+   parte do produto) e o botão de tema. */
+.topo__controles {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 0;
 }
 
-.controle__campo--forte {
+.topo__data {
+  margin-right: 0.75rem;
+  color: var(--texto-suave);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.ver-como {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  color: var(--texto-suave);
+  font-size: 0.8125rem;
+}
+
+.ver-como__rotulo {
+  white-space: nowrap;
+}
+
+/* Parece texto (sem caixa); o sublinhado pontilhado e a seta dizem que é clicável. */
+.ver-como__campo {
+  min-height: 2.75rem;
+  max-width: 13rem;
+  padding: 0 0.375rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--texto);
+  font-size: 0.8125rem;
   font-weight: 600;
+  text-decoration: underline dotted var(--controle);
+  text-underline-offset: 0.25em;
+  text-overflow: ellipsis;
+  field-sizing: content;
+  cursor: pointer;
+}
+
+.ver-como__campo:hover {
+  background: var(--superficie2);
+}
+
+.ver-como__campo option,
+.ver-como__campo optgroup {
+  background: var(--superficie);
+  color: var(--texto);
+}
+
+.botao-icone {
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--texto-suave);
+}
+
+.botao-icone:hover {
+  background: var(--superficie2);
+  color: var(--texto);
 }
 
 @media (min-width: 40rem) {
@@ -228,29 +263,18 @@ button {
   }
 }
 
-@media (max-width: 39.99rem) {
+@media (max-width: 47.99rem) {
   .topo__data,
   .marca__secao {
     display: none;
   }
 
-  .topo__controles {
-    flex-wrap: nowrap;
-    width: 100%;
-    gap: 0.5rem;
+  .ver-como__campo {
+    max-width: 9.5rem;
   }
 
-  .topo__controles .controle:last-child {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .topo__controles .controle:last-child .controle__campo {
-    width: 100%;
-  }
-
-  /* O nome continua acessível (aria-label implícito do <label>), só sai da vista. */
-  .controle__rotulo {
+  /* O nome continua acessível (vem do <label>), só sai da vista. */
+  .ver-como__rotulo {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -1016,19 +1040,18 @@ button {
 /* ---- Vendedor (celular primeiro) ----------------------------------------- */
 
 .pagina--celular {
-  max-width: 40rem;
+  max-width: 72rem;
   padding: 0;
 }
 
-.celular {
-  min-height: calc(100vh - var(--altura-topo));
-  display: flex;
-  flex-direction: column;
+.celular > section {
+  padding: 1.25rem 1rem calc(4.25rem + 1.5rem);
 }
 
-.celular > section {
-  flex: 1;
-  padding: 1.25rem 1rem 1.5rem;
+@media (min-width: 48rem) {
+  .celular > section {
+    padding: 1.5rem 2rem 3rem;
+  }
 }
 
 .celular__cabecalho {
@@ -1114,9 +1137,7 @@ button {
 }
 
 .cartao__mensagem {
-  padding: 0.625rem 0.75rem;
-  border-radius: 0.625rem;
-  background: var(--superficie2);
+  font-weight: 500;
 }
 
 .cartao__aviso {
@@ -1185,8 +1206,13 @@ button {
   border-bottom: 0;
 }
 
+/* Abas: no código vêm antes do conteúdo (ordem lógica para teclado e leitor
+   de tela). No celular ficam presas embaixo, ao alcance do polegar; no
+   computador, no topo, como abas comuns. */
 .abas-inferiores {
-  position: sticky;
+  position: fixed;
+  left: 0;
+  right: 0;
   bottom: 0;
   z-index: 10;
   display: grid;
@@ -1214,6 +1240,65 @@ button {
   color: var(--marca);
   font-weight: 700;
   box-shadow: inset 0 3px 0 var(--marca);
+}
+
+@media (min-width: 48rem) {
+  .abas-inferiores {
+    position: static;
+    display: flex;
+    gap: 0.25rem;
+    padding: 0 2rem;
+    border-top: 0;
+    border-bottom: 1px solid var(--linha);
+    background: transparent;
+  }
+
+  .aba-inferior {
+    min-height: 3rem;
+    flex-direction: row;
+    gap: 0.5rem;
+    padding: 0 1rem;
+    font-size: 0.9375rem;
+  }
+
+  .aba-inferior svg {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  .aba-inferior[aria-current='page'] {
+    box-shadow: inset 0 -3px 0 var(--marca);
+  }
+
+  /* Cartões em colunas no computador. */
+  .cartoes {
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    align-items: start;
+  }
+
+  .contadores {
+    max-width: 30rem;
+  }
+
+  .celular__cabecalho .busca {
+    max-width: 30rem;
+  }
+
+  .lista-compacta {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    gap: 0.625rem;
+    border: 0;
+    background: transparent;
+    overflow: visible;
+  }
+
+  .lista-compacta li,
+  .lista-compacta li:last-child {
+    border: 1px solid var(--linha);
+    border-radius: var(--raio);
+    background: var(--superficie);
+  }
 }
 
 /* ---- Preferências de acessibilidade do sistema --------------------------- */
@@ -1261,6 +1346,7 @@ button {
 
   .linha--selecionada,
   .aba-inferior[aria-current='page'],
+  .botao-icone,
   .resumo__item[aria-pressed='true'] {
     outline: 3px solid Highlight;
     outline-offset: -3px;

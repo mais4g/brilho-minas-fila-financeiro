@@ -82,6 +82,7 @@ describe('anomalias dos dados', () => {
     ['1006', 'sem vendedor'],
     ['1013', 'comissão'],
     ['1108', 'digitado 2x'],
+    ['C018', 'nomes quase iguais'],
   ])('encontra %s (%s)', (registro, trecho) => {
     expect(texto).toMatch(new RegExp(`${registro}.*${trecho.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`));
   });

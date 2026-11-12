@@ -46,7 +46,8 @@ function relatorioAnomalias(anomalias: Anomalia[]): string {
   ].join('\n');
 }
 
-function principal() {
+/** Grava src/gerado/<perfil>.json e docs/anomalias-dos-dados.md. O build usa a mesma função. */
+export function gravarTudo(): { base: Base; perfis: Map<string, DadosPerfil> } {
   const base = carregarBase(lerDados(), DATA_REFERENCIA);
   const perfis = gerarPerfis(base);
 
@@ -57,7 +58,11 @@ function principal() {
   }
   mkdirSync(resolve(raiz, 'docs'), { recursive: true });
   writeFileSync(resolve(raiz, 'docs/anomalias-dos-dados.md'), relatorioAnomalias(base.anomalias));
+  return { base, perfis };
+}
 
+function principal() {
+  const { base, perfis } = gravarTudo();
   const fin = perfis.get('financeiro');
   const fila = fin?.perfil === 'financeiro' ? fin.fila : [];
   const conta = (s: string) => fila.filter((p) => p.sugestao === s).length;

@@ -50,8 +50,9 @@ export function alertaFinanceiro(a: Alerta): string {
   switch (a.tipo) {
     case 'cadastro_duplicado': {
       const outros = a.outros.map((o) => `${o.id} "${o.razaoSocial}" (limite ${formatarReais(o.limite)})`).join(', ');
-      const limite = a.limiteUsado === null ? 'sem limite' : `o menor limite, ${formatarReais(a.limiteUsado)}`;
-      return `Mesmo CNPJ cadastrado também como ${outros}. Os boletos dos cadastros foram somados e foi usado ${limite}.`;
+      const limite = a.limiteUsado === null ? 'nenhum limite' : `o menor limite (${formatarReais(a.limiteUsado)})`;
+      const nome = a.nomesDiferentes ? ', com o nome digitado de outro jeito' : '';
+      return `Cliente cadastrado em dobro: é a mesma empresa (mesmo CNPJ) que ${outros}${nome}. Os boletos dos cadastros foram somados e foi usado ${limite} até confirmar qual vale.`;
     }
     case 'cadastro_incompleto':
       return `Cadastro incompleto: ${a.problemas.join(', ')}.`;

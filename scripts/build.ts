@@ -1,10 +1,8 @@
 import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { build } from 'vite';
-import { carregarBase } from '../src/dominio/carregar';
-import { DATA_REFERENCIA } from '../src/dominio/config';
 import { arquivoDoPerfil, listarPerfis } from '../src/dominio/visoes';
-import { gerarPerfis, lerDados } from './gerar';
+import { gravarTudo } from './gerar';
 
 /**
  * Gera tela/: um HTML autocontido por perfil (abre com dois cliques, sem
@@ -20,12 +18,7 @@ const saida = resolve(raiz, 'tela');
 const escapar = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c] ?? c);
 
 async function principal() {
-  const base = carregarBase(lerDados(), DATA_REFERENCIA);
-  const perfis = gerarPerfis(base);
-
-  const gerado = resolve(raiz, 'src/gerado');
-  mkdirSync(gerado, { recursive: true });
-  for (const [id, dados] of perfis) writeFileSync(resolve(gerado, `${id}.json`), `${JSON.stringify(dados, null, 2)}\n`);
+  const { base, perfis } = gravarTudo();
 
   rmSync(saida, { recursive: true, force: true });
   mkdirSync(saida, { recursive: true });

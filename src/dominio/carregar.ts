@@ -32,7 +32,8 @@ export interface DadosBrutos {
 }
 
 /**
- * Clientes que são a mesma empresa (mesmo CNPJ) cadastrados mais de uma vez.
+ * Clientes que são a mesma empresa (mesmo CNPJ) cadastrados mais de uma vez,
+ * por exemplo com o nome digitado de outro jeito (C001 e C037).
  * A análise de crédito é feita pelo grupo: a dívida de um cadastro conta para o outro.
  */
 export interface GrupoCredito {
@@ -141,8 +142,8 @@ export function carregarBase(brutos: DadosBrutos, dataReferencia: string): Base 
       anomalias.push({
         arquivo: 'clientes',
         registro: membros.map((m) => `${m.id} ${m.razao_social}`).join(' / '),
-        descricao: `mesmo CNPJ (${membros[0]?.cnpj}) cadastrado ${membros.length} vezes, com limites ${membros.map((m) => m.limite_credito).join(' e ')}`,
-        tratamento: 'tratados como um cliente só: a dívida de todos os cadastros soma e vale o menor limite',
+        descricao: descreverDuplicidade(membros),
+        tratamento: 'tratados como um cliente só: a dívida de todos os cadastros soma; enquanto não se confirma qual limite vale, usa o menor',
       });
     }
   }
@@ -226,6 +227,18 @@ export function carregarBase(brutos: DadosBrutos, dataReferencia: string): Base 
   }
 
   return { vendedores, clientes, produtos, pedidos, titulos, grupoDoCliente, titulosDoCliente, anomalias };
+}
+
+function descreverDuplicidade(membros: Cliente[]): string {
+  const iguais = (campo: 'telefone_whatsapp' | 'vendedor_id' | 'cidade') => membros.every((m) => m[campo] === membros[0]?.[campo]);
+  const tambem = [iguais('telefone_whatsapp') && 'telefone', iguais('vendedor_id') && 'vendedor', iguais('cidade') && 'cidade'].filter(Boolean);
+  const nomes = new Set(membros.map((m) => m.razao_social));
+  return [
+    `mesma empresa cadastrada ${membros.length} vezes: mesmo CNPJ (${membros[0]?.cnpj})`,
+    tambem.length > 0 ? `, mesmo ${tambem.join(', ')}` : '',
+    nomes.size > 1 ? `, nome digitado de jeitos diferentes (${[...nomes].map((n) => `"${n}"`).join(' / ')})` : '',
+    `; limites diferentes (${membros.map((m) => m.limite_credito).join(' e ')})`,
+  ].join('');
 }
 
 export function valorDosItens(p: Pedido): number {

@@ -11,7 +11,7 @@ export const JANELA_DUPLICIDADE_MIN = 60;
 
 /** Situações que a regra não cobre, mas que a Marta precisa saber antes de decidir. */
 export type Alerta =
-  | { tipo: 'cadastro_duplicado'; outros: { id: string; razaoSocial: string; limite: number }[]; limiteUsado: number | null }
+  | { tipo: 'cadastro_duplicado'; outros: { id: string; razaoSocial: string; limite: number }[]; nomesDiferentes: boolean; limiteUsado: number | null }
   | { tipo: 'cadastro_incompleto'; problemas: string[] }
   | { tipo: 'status_boleto_desatualizado'; tituloIds: string[] }
   | { tipo: 'possivel_duplicado'; outroPedido: number; status: StatusPedido }
@@ -90,6 +90,7 @@ export function analisarPedido(base: Base, pedido: Pedido, dataReferencia: strin
         .map((id) => base.clientes.get(id))
         .filter((c) => c !== undefined)
         .map((c) => ({ id: c.id, razaoSocial: c.razao_social, limite: c.limite_credito })),
+      nomesDiferentes: grupo.clienteIds.some((id) => base.clientes.get(id)?.razao_social !== cliente?.razao_social),
       limiteUsado: grupo.limite,
     });
   }

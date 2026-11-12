@@ -48,7 +48,7 @@ describe('fila do financeiro com os dados da Brilho Minas (11/11/2026)', () => {
 
   it('1110 (C037) herda os boletos do C001, que tem o mesmo CNPJ', () => {
     const a = doPedido(1110);
-    expect(tiposAlerta(1110)).toContain('cadastro_duplicado');
+    expect(doPedido(1110).alertas).toContainEqual(expect.objectContaining({ tipo: 'cadastro_duplicado', nomesDiferentes: true }));
     expect(a.credito.titulosEmAberto.length).toBeGreaterThan(0);
     expect(a.credito.limite).toBe(5000);
   });

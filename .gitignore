@@ -5,3 +5,17 @@ node_modules/
 coverage/
 src/gerado/
 .build/
+
+# Dados originais do Sistemão (CNPJ, telefone, histórico de pagamento): ficam só na máquina.
+# O repositório usa amostra/, gerada por `npm run mascarar`.
+dados/
+
+# Saídas geradas a partir dos dados: o CI gera de novo a partir de amostra/ e publica no Pages.
+tela/
+docs/anomalias-dos-dados.md
+docs/prints/
+
+# Documentos de trabalho ainda não publicados.
+DIAGNOSTICO.md
+PLANO.md
+LEIA-ME.md

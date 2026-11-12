@@ -5,6 +5,7 @@
   "type": "module",
   "description": "Fila do financeiro da Brilho Minas: regra de crédito da Marta e visão por perfil",
   "scripts": {
+    "mascarar": "tsx scripts/mascarar.ts",
     "gerar": "tsx scripts/gerar.ts",
     "dev": "npm run gerar && vite",
     "build": "tsx scripts/build.ts",

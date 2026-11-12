@@ -2,21 +2,24 @@
 
 Protótipo da fila de liberação de pedidos da Brilho Minas. A regra de crédito da Marta é aplicada sobre os dados do Sistemão e há uma tela para cada perfil: o **financeiro** vê a fila completa com sugestão e motivo, e cada **vendedor** vê só os próprios pedidos e clientes no celular, sem valores de dívida.
 
-- **Parte 1 (diagnóstico):** [`DIAGNOSTICO.md`](DIAGNOSTICO.md)
-- **Parte 2 (tela):** pasta [`tela/`](tela/)
-- **Anomalias nos dados:** [`docs/anomalias-dos-dados.md`](docs/anomalias-dos-dados.md)
-- **Plano e acompanhamento:** [`PLANO.md`](PLANO.md)
+**Abrir a tela:** https://mais4g.github.io/brilho-minas-fila-financeiro/
 
 ## Como abrir
 
-**Abra o arquivo `tela/index.html` no navegador** (dois cliques) e escolha quem está olhando. Não precisa instalar nada nem ter internet: cada página é um arquivo HTML único, com tudo dentro.
+**Pelo link acima**, escolha quem está olhando. Dentro de qualquer página, o seletor **"Ver como"** no topo troca de perfil.
 
-Dentro de qualquer página, o seletor **"Ver como"** no topo troca de perfil.
-
-| Arquivo | Quem |
+| Página | Quem |
 |---|---|
-| `tela/financeiro.html` | Marta (financeiro) |
-| `tela/vendedor-v01.html` … `vendedor-v06.html` | cada um dos 6 vendedores |
+| `financeiro.html` | Marta (financeiro) |
+| `vendedor-v01.html` … `vendedor-v06.html` | cada um dos 6 vendedores |
+
+**Sem internet:** rode `npm ci && npm run build` e abra `tela/index.html` com dois cliques. Cada página é um HTML único, com tudo dentro; não precisa de servidor.
+
+### Dados
+
+Os JSONs originais do Sistemão têm CNPJ, telefone e histórico de pagamento, então **não estão no repositório**. O que está aqui é a [`amostra/`](amostra/): os mesmos registros, com CNPJ e telefone trocados por valores fictícios (`npm run mascarar`). A troca mantém iguais os CNPJs que eram iguais, então a duplicidade do cliente C001/C037 continua aparecendo. É essa amostra que o CI testa e que o Pages publica.
+
+Para usar os dados originais, coloque os 5 JSONs em `dados/` (ignorada pelo git). O build passa a usar essa pasta automaticamente.
 
 ### Para quem for mexer no código
 
@@ -24,17 +27,14 @@ Precisa do Node 24 ou mais recente.
 
 ```bash
 npm ci
-npm test            # 75 testes: regra de crédito, dados reais e segurança por perfil
-npm run build       # gera tela/ (um HTML por perfil) a partir de dados/
+npm test            # 77 testes: regra de crédito, dados reais, segurança por perfil e amostra mascarada
+npm run build       # gera tela/ (um HTML por perfil) e docs/anomalias-dos-dados.md
 npm run dev         # servidor local com recarga (perfil financeiro; PERFIL=V01 npm run dev para um vendedor)
 npm run check       # tipos + testes + build, o mesmo que o CI roda
+npm run mascarar    # gera amostra/ a partir de dados/
 ```
 
-## Prints
-
-| Marta (financeiro, computador) | Vendedor no celular: pedidos | Vendedor no celular: clientes |
-|---|---|---|
-| ![Fila da Marta](docs/prints/marta-financeiro.png) | ![Pedidos da Patrícia](docs/prints/vendedor-celular-pedidos.png) | ![Clientes da Patrícia](docs/prints/vendedor-celular-clientes.png) |
+O CI (GitHub Actions) roda tipos, testes e build a cada push e publica a pasta `tela/` no GitHub Pages a cada push na `main`.
 
 ## O que a tela faz
 
@@ -76,7 +76,7 @@ Fica em [`src/dominio/credito.ts`](src/dominio/credito.ts), como uma função pu
 - **Limite honesto disso:** sem login, qualquer pessoa pode abrir qualquer arquivo. Na versão real, cada pessoa entra com o próprio acesso e o servidor só entrega a projeção do perfil dela. As funções `projetarFinanceiro` e `projetarVendedor` ([`src/dominio/visoes.ts`](src/dominio/visoes.ts)) são exatamente o que esse servidor usaria.
 - **Mínimo de dados.** Telefone não vai para nenhuma tela, porque nenhuma precisa dele (LGPD). O CNPJ só aparece para o financeiro.
 - **Validação na entrada.** Cada registro do Sistemão passa por um esquema (Zod). O que vier com formato quebrado é registrado como anomalia e ignorado, em vez de derrubar a tela. Isso também tem teste.
-- **Cliente cadastrado em dobro é tratado como um cliente só.** C001 e C037 são a mesma empresa: mesmo CNPJ, telefone, vendedor e cidade, com o nome digitado de outro jeito. A dívida dos dois cadastros soma e a Marta vê um aviso explicando. A única coisa que não dá para saber pelos dados é **qual dos dois limites vale** (R$ 8.000 ou R$ 5.000). Até alguém confirmar, uso o menor, e isso entrou na pergunta 2 do diagnóstico. Hoje não faz diferença: o 1110 bloqueia pelo atraso com qualquer um dos dois.
+- **Cliente cadastrado em dobro é tratado como um cliente só.** C001 e C037 são a mesma empresa: mesmo CNPJ, telefone, vendedor e cidade, com o nome digitado de outro jeito. A dívida dos dois cadastros soma e a Marta vê um aviso explicando. A única coisa que não dá para saber pelos dados é **qual dos dois limites vale** (R$ 8.000 ou R$ 5.000). Até alguém confirmar, uso o menor, e isso virou uma das perguntas do diagnóstico. Hoje não faz diferença: o 1110 bloqueia pelo atraso com qualquer um dos dois.
 - **Para o vendedor, é "previsão" enquanto a Marta não decide.** Assim ele não promete entrega com base numa sugestão. E um pedido que a Marta **já barrou** aparece como Bloqueado, mesmo que a regra hoje sugira liberar, porque a decisão dela vale mais.
 - **Os textos do vendedor saem de códigos, não do texto da Marta.** O vendedor recebe "pagamento atrasado", e nunca "43 dias" ou "R$ 4.195,64". Um teste garante que não há números nesses textos.
 - **Valor do pedido:** se o valor informado não bater com a soma dos itens, a regra usa o maior e avisa. Nos dados atuais, todos batem.
@@ -84,7 +84,7 @@ Fica em [`src/dominio/credito.ts`](src/dominio/credito.ts), como uma função pu
 
 ## O que encontrei de estranho nos dados
 
-O relatório completo é gerado automaticamente em [`docs/anomalias-dos-dados.md`](docs/anomalias-dos-dados.md). Os principais casos:
+O relatório completo é gerado automaticamente em `docs/anomalias-dos-dados.md` a cada `npm run build` (fica fora do repositório porque cita CNPJ). Os principais casos:
 
 | O que | Impacto | O que fiz |
 |---|---|---|
@@ -93,7 +93,7 @@ O relatório completo é gerado automaticamente em [`docs/anomalias-dos-dados.md
 | **Pedidos 1105 e 1108:** mesmo cliente, mesmos itens, mesmo minuto (11:51); o 1108 tem a observação "digitado 2x? conferir" | Cada um sozinho cabe no limite; **os dois juntos passam** (R$ 6.836 de R$ 6.000) | Os dois ficam como Liberar, mas com aviso de duplicidade e de limite somado, para a Marta e para a vendedora |
 | **C038 "Hotel Savasi Plaza":** sem CNPJ, sem vendedor e com limite 0 | Não tem pedido na fila hoje | Registrado; qualquer pedido dele seria Bloquear (sem limite) e não aparece para nenhum vendedor |
 | **Pedido 1006** sem vendedor ("pedido veio por áudio, vendedor não identificado") | Já entregue | Registrado; não aparece para nenhum vendedor |
-| **Pedido 1013:** 120 sacos de lixo com a observação "cliente pediu 12, conferir", e comissão de R$ 33,95 quando 3% daria R$ 206,10 | Já entregue | Registrado. É o tipo de erro de digitação (12%) que a semana 3 do diagnóstico ataca |
+| **Pedido 1013:** 120 sacos de lixo com a observação "cliente pediu 12, conferir", e comissão de R$ 33,95 quando 3% daria R$ 206,10 | Já entregue | Registrado. É o tipo de erro de digitação (12%) que vale atacar com uma conferência automática de quantidades |
 
 ## O que ficou de fora
 
@@ -104,11 +104,12 @@ O relatório completo é gerado automaticamente em [`docs/anomalias-dos-dados.md
 
 ## Como usei a IA
 
-Usei o Claude Code do começo ao fim. A conversa exportada está em [`docs/conversa-com-ia.md`](docs/conversa-com-ia.md).
+Usei o Claude Code do começo ao fim. A conversa exportada vai ficar em `docs/conversa-com-ia.md`.
 
 **Onde ajudou**
 - Leu o enunciado e escreveu um script para varrer os 5 arquivos atrás de inconsistências. Achou o CNPJ duplicado, o boleto com status errado e os pedidos em dobro antes de qualquer linha da tela.
 - Escreveu a regra, os testes de casos-limite e as telas, e conferiu o visual em 390px com o Chrome em modo headless.
+- Montou a amostra mascarada (CNPJ e telefone fictícios) para o repositório ficar só com código, e o deploy no GitHub Pages.
 
 **Onde precisei corrigir ou direcionar**
 - A primeira proposta foi HTML + JavaScript puro. Questionei se dava para ter mais robustez, e mudamos para TypeScript, validação, testes e um HTML por perfil.
@@ -120,11 +121,10 @@ Usei o Claude Code do começo ao fim. A conversa exportada está em [`docs/conve
 ## Estrutura
 
 ```
-dados/              JSONs originais do Sistemão (não alterados)
 src/dominio/        regra e dados: esquemas, carregar, credito, fila, textos, visoes
 src/app/            telas (React)
 scripts/            gerar.ts (dados por perfil + relatório) e build.ts (um HTML por perfil)
 testes/             regra, dados reais e segurança
-tela/               resultado do build: é isto que se abre no navegador
-docs/               relatório de anomalias, prints e conversa com a IA
+amostra/            dados do Sistemão com CNPJ e telefone mascarados (os originais ficam em dados/, fora do git)
+tela/               resultado do build (fora do git; publicado no Pages)
 ```

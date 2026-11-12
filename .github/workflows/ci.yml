@@ -3,6 +3,10 @@ name: CI
 on:
   push:
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   verificar:
@@ -16,9 +20,25 @@ jobs:
       - run: npm ci
       - name: Tipos
         run: npm run typecheck
-      - name: Testes (regra de crédito, dados reais, segurança por perfil)
+      - name: Testes (regra de crédito, dados reais, segurança por perfil, amostra mascarada)
         run: npm test
-      - name: Build (um HTML por perfil)
+      - name: Build (um HTML por perfil, a partir de amostra/)
         run: npm run build
-      - name: A tela versionada está igual ao build
-        run: git diff --exit-code -- tela/ || (echo "Rode npm run build e faça commit da pasta tela/" && exit 1)
+      - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          path: tela
+
+  publicar:
+    if: github.ref == 'refs/heads/main'
+    needs: verificar
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

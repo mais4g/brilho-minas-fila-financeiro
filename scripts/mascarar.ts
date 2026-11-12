@@ -2,14 +2,22 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 /**
- * Gera amostra/ a partir de dados/: os mesmos registros, com CNPJ e telefone
- * trocados por valores fictícios. É o que vai para o repositório, o CI e o Pages.
+ * Ferramenta para quando os dados forem REAIS: gera amostra/ a partir de dados/,
+ * com CNPJ e telefone trocados por valores fictícios, para poder versionar e
+ * publicar uma amostra sem expor clientes.
+ *
+ * Neste desafio os dados já são fictícios (fornecidos pela avaliadora), então o
+ * repositório usa os originais e este script não faz parte do build. Por que ele
+ * existe e por que não foi usado: README, seção "Dados".
  *
  * - A troca é sequencial (1º CNPJ visto → 1º falso…), não um hash: não dá para
  *   voltar ao original por força bruta.
- * - CNPJs iguais continuam iguais (a duplicidade C001/C037 continua detectável),
- *   e o CNPJ falso tem dígitos verificadores válidos.
- * - Campo vazio continua vazio (o C038 continua "sem CNPJ").
+ * - CNPJs iguais continuam iguais, comparando só os dígitos (com ou sem
+ *   pontuação), para a duplicidade de cadastro continuar detectável.
+ * - CNPJ inválido (não tem 14 dígitos) fica como está, para a anomalia
+ *   "CNPJ inválido" continuar aparecendo. Campo vazio continua vazio.
+ * - Atenção: nome, cidade e histórico de pagamento continuam. Para dados reais,
+ *   a razão social também precisaria ser trocada (pelo nome dá para achar o CNPJ).
  */
 
 const raiz = resolve(import.meta.dirname, '..');
@@ -31,19 +39,25 @@ function cnpjFicticio(n: number): string {
 
 const telefoneFicticio = (n: number) => `+55 31 90000-${String(n).padStart(4, '0')}`;
 
-function substituidor(gerar: (n: number) => string) {
+function substituidor(gerar: (n: number) => string, chave: (original: string) => string | null) {
   const mapa = new Map<string, string>();
   return (original: string) => {
-    if (!original.trim()) return original;
-    if (!mapa.has(original)) mapa.set(original, gerar(mapa.size + 1));
-    return mapa.get(original) as string;
+    const k = chave(original);
+    if (k === null) return original;
+    if (!mapa.has(k)) mapa.set(k, gerar(mapa.size + 1));
+    return mapa.get(k) as string;
   };
 }
 
+const digitos = (t: string) => t.replace(/\D/g, '');
+/** Só CNPJs válidos (14 dígitos) são trocados; vazio e inválido ficam como estão. */
+const chaveCnpj = (t: string) => (digitos(t).length === 14 ? digitos(t) : null);
+const chaveTelefone = (t: string) => (digitos(t).length >= 10 ? digitos(t) : null);
+
 export function mascararClientes(clientes: unknown): unknown {
   if (!Array.isArray(clientes)) return clientes;
-  const cnpj = substituidor(cnpjFicticio);
-  const telefone = substituidor(telefoneFicticio);
+  const cnpj = substituidor(cnpjFicticio, chaveCnpj);
+  const telefone = substituidor(telefoneFicticio, chaveTelefone);
   return clientes.map((c: Record<string, unknown>) => ({
     ...c,
     ...(typeof c.cnpj === 'string' ? { cnpj: cnpj(c.cnpj) } : {}),

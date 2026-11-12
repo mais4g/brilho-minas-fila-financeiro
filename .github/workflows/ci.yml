@@ -20,10 +20,12 @@ jobs:
       - run: npm ci
       - name: Tipos
         run: npm run typecheck
-      - name: Testes (regra de crédito, dados reais, segurança por perfil, amostra mascarada)
+      - name: Testes (regra de crédito, dados reais, segurança por perfil, contraste dos temas)
         run: npm test
-      - name: Build (um HTML por perfil, a partir de amostra/)
+      - name: Build (um HTML por perfil)
         run: npm run build
+      - name: A tela versionada está igual ao build
+        run: git diff --exit-code -- tela/ docs/anomalias-dos-dados.md || (echo "Rode npm run build e faça commit de tela/ e docs/" && exit 1)
       - uses: actions/upload-pages-artifact@v3
         if: github.ref == 'refs/heads/main'
         with:

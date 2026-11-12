@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { type Anomalia, type Base, carregarBase, type DadosBrutos } from '../src/dominio/carregar';
 import { DATA_REFERENCIA } from '../src/dominio/config';
@@ -13,11 +13,10 @@ import { type DadosPerfil, projetarFinanceiro, projetarVendedor } from '../src/d
 const raiz = resolve(import.meta.dirname, '..');
 
 /**
- * dados/ tem os JSONs originais e fica fora do repositório (CNPJ, telefone).
- * Sem ela (CI, Pages, quem clonar), usa amostra/: os mesmos dados mascarados.
+ * dados/ tem os JSONs do Sistemão (fictícios, fornecidos pela avaliadora).
+ * DADOS=<pasta> usa outra pasta, por exemplo a amostra mascarada (npm run mascarar).
  */
-export const pastaDeDados = (): string =>
-  process.env.DADOS ? resolve(raiz, process.env.DADOS) : existsSync(resolve(raiz, 'dados/clientes.json')) ? resolve(raiz, 'dados') : resolve(raiz, 'amostra');
+export const pastaDeDados = (): string => resolve(raiz, process.env.DADOS ?? 'dados');
 
 export function lerDados(pasta = pastaDeDados()): DadosBrutos {
   const ler = (nome: string): unknown => JSON.parse(readFileSync(resolve(pasta, `${nome}.json`), 'utf-8'));

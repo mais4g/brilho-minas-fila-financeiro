@@ -106,7 +106,7 @@ Fica em [`src/dominio/credito.ts`](../src/dominio/credito.ts), como uma função
 - **"Vencido" é decidido pela data de vencimento, não pelo campo status.** Um boleto "aberto" que venceu há 12 dias está vencido.
 - Valores comparados **em centavos**, para não errar no centavo por arredondamento.
 - **Atraso leve + acima do limite** dá Bloquear (o bloqueio prevalece), e o motivo mostra os dois quando houver.
-- A data de referência é fixa em **11/11/2026** (a data do LEIA-ME), em [`src/dominio/config.ts`](../src/dominio/config.ts).
+- A data de referência é fixa em **11/11/2026** (a data do [LEIA-ME dos dados](../dados/LEIA-ME.md)), em [`src/dominio/config.ts`](../src/dominio/config.ts).
 
 ## Decisões e por quê
 
@@ -145,7 +145,7 @@ O relatório completo é gerado automaticamente em [`docs/anomalias-dos-dados.md
 
 ## Como usei a IA
 
-Usei o Claude Code do começo ao fim. A conversa exportada vai ficar em `docs/conversa-com-ia.md`.
+Usei o Claude Code do começo ao fim. A conversa exportada, sem edição, está em [`conversa-com-ia.md`](conversa-com-ia.md).
 
 **Onde ajudou**
 - Leu o enunciado e escreveu um script para varrer os 5 arquivos atrás de inconsistências. Achou o CNPJ duplicado, o boleto com status errado e os pedidos em dobro antes de qualquer linha da tela.
@@ -171,9 +171,9 @@ Usei o Claude Code do começo ao fim. A conversa exportada vai ficar em `docs/co
 src/dominio/        regra e dados: esquemas, carregar, credito, fila, textos, visoes
 src/app/            telas (React)
 scripts/            gerar.ts (dados por perfil + relatório), build.ts (um HTML por perfil), mascarar.ts (para dados reais)
-dados/              JSONs do Sistemão (fictícios, entregues com o desafio)
 src/app/tema.ts     cores dos temas claro e escuro (fonte única, com contraste testado)
+dados/              JSONs do Sistemão (fictícios, entregues com o desafio) e o LEIA-ME original deles
 testes/             regra, dados reais, segurança por perfil, contraste, mascaramento
 tela/               resultado do build: é isto que se abre no navegador (também publicado no Pages)
-docs/               acessibilidade, relatório de anomalias e prints
+docs/               detalhes, plano de trabalho, conversa com a IA, acessibilidade, relatório de anomalias e prints
 ```

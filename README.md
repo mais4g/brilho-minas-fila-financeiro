@@ -6,6 +6,13 @@ A fila de liberação de pedidos da Brilho Minas, com a regra de crédito da Mar
 
 **Abrir:** https://mais4g.github.io/brilho-minas-fila-financeiro/
 
+| Parte | Onde está |
+|---|---|
+| 1 · Diagnóstico | [`DIAGNOSTICO.md`](DIAGNOSTICO.md) |
+| 2 · Tela | [link acima](https://mais4g.github.io/brilho-minas-fila-financeiro/) ou [`tela/index.html`](tela/index.html) |
+| Conversa com a IA (sem edição) | [`docs/conversa-com-ia.md`](docs/conversa-com-ia.md) |
+| Plano e acompanhamento | [`docs/plano.md`](docs/plano.md) |
+
 | Marta (financeiro) | Vendedora no celular |
 |---|---|
 | ![Fila da Marta](docs/prints/marta-claro.png) | ![Pedidos da Patrícia](docs/prints/vendedor-pedidos-claro.png) |
@@ -56,7 +63,16 @@ A lista completa é gerada a cada build em [`docs/anomalias-dos-dados.md`](docs/
 
 ## Como usei a IA
 
-Usei o Claude Code do começo ao fim. A conversa exportada fica em `docs/conversa-com-ia.md`.
+Usei o Claude Code do começo ao fim. A conversa exportada, sem edição, está em [`docs/conversa-com-ia.md`](docs/conversa-com-ia.md).
+
+**Tempo:** cerca de 3 horas, em 12/11. Pedi à IA para não se prender ao tempo (linha 285 da conversa) e investi a sobra em validação dos dados, testes da regra e acessibilidade.
+
+**Momentos-chave da conversa** (número da linha):
+- **225:** questionei a primeira proposta (HTML + JS puro) e pedi mais robustez.
+- **785:** pedi as alternativas antes de aceitar as duas decisões sobre os dados.
+- **870:** mostrei que C001 e C037 são a mesma empresa, que a IA tratava como suposição.
+- **1036 e 1385:** proteção de dados: primeiro esconder os sensíveis, depois a decisão de usar os fictícios e documentar por que não faria isso com dados reais.
+- **4449 e 4473:** revisei a tela e pedi uma conferência completa contra o enunciado.
 
 **Onde ajudou:**
 - achou as sujeiras dos dados antes de qualquer tela;
@@ -81,6 +97,16 @@ A lista completa está em [detalhes](docs/detalhes.md#como-usei-a-ia).
 ```bash
 npm ci && npm run check   # tipos + 161 testes + build (o mesmo que o CI)
 npm run dev               # servidor local (PERFIL=V01 npm run dev para um vendedor)
+```
+
+```
+DIAGNOSTICO.md   Parte 1
+tela/            Parte 2 pronta: um HTML por perfil (é o que vai para o Pages)
+src/             regra de crédito (src/dominio) e telas (src/app)
+testes/          regra, segurança por perfil, dados, contraste
+scripts/         geração dos dados por perfil e build
+dados/           JSONs do Sistemão e o LEIA-ME original
+docs/            detalhes, plano, conversa com a IA, acessibilidade, anomalias e prints
 ```
 
 A estrutura do código e todas as decisões, uma a uma, estão em [`docs/detalhes.md`](docs/detalhes.md).

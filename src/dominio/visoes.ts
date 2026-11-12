@@ -114,7 +114,7 @@ export function listarPerfis(base: Base): PerfilDisponivel[] {
     { id: 'financeiro', nome: 'Marta', descricao: 'Financeiro', arquivo: arquivoDoPerfil('financeiro') },
     ...[...base.vendedores.values()]
       .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
-      .map((v) => ({ id: v.id, nome: v.nome, descricao: `Vendedor · ${v.regiao}`, arquivo: arquivoDoPerfil(v.id) })),
+      .map((v) => ({ id: v.id, nome: v.nome, descricao: `Vendas · ${v.regiao}`, arquivo: arquivoDoPerfil(v.id) })),
   ];
 }
 

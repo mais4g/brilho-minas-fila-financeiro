@@ -158,6 +158,13 @@ button {
   min-width: 0;
 }
 
+/* A marca leva de volta à página de entrada (escolher perfil). */
+a.marca {
+  color: inherit;
+  text-decoration: none;
+  border-radius: 0.5rem;
+}
+
 .marca__simbolo {
   flex-shrink: 0;
   width: 2rem;
@@ -1301,6 +1308,88 @@ button {
   }
 }
 
+/* ---- Página de entrada (escolher perfil) -------------------------------- */
+
+.inicio {
+  max-width: 44rem;
+  margin: 0 auto;
+  display: grid;
+  gap: 1.75rem;
+}
+
+.inicio__grupo {
+  display: grid;
+  gap: 0.625rem;
+}
+
+.perfis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 0.625rem;
+}
+
+.perfil {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-height: 4.5rem;
+  padding: 0.875rem 2.75rem 0.875rem 1rem;
+  border: 1px solid var(--linha);
+  border-radius: 0.75rem;
+  background: var(--superficie);
+  color: inherit;
+  text-decoration: none;
+}
+
+.perfil:hover {
+  border-color: var(--controle);
+}
+
+.perfil--destaque {
+  background: var(--marca);
+  border-color: var(--marca);
+  color: var(--sobre-marca);
+}
+
+.perfil--destaque:hover {
+  border-color: var(--marca);
+}
+
+.perfil__nome {
+  font-family: var(--fonte-titulo);
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.perfil__detalhe {
+  font-size: 0.875rem;
+  color: var(--texto-suave);
+}
+
+.perfil--destaque .perfil__detalhe {
+  color: var(--sobre-marca);
+}
+
+.perfil__seta {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.25rem;
+  color: var(--marca);
+}
+
+.perfil--destaque .perfil__seta {
+  color: var(--sobre-marca);
+}
+
+.inicio__nota {
+  font-size: 0.8125rem;
+  color: var(--texto-suave);
+}
+
 /* ---- Preferências de acessibilidade do sistema --------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1320,6 +1409,7 @@ button {
   .etiqueta,
   .contadores__item,
   .resumo__item,
+  .perfil,
   .cartao__aviso,
   .aviso {
     border: 1px solid CanvasText;

@@ -214,3 +214,4 @@
 - [x] README: link do diagnóstico no topo, tempo gasto, estrutura e momentos-chave da conversa
 - [x] Diagnóstico: cuidado de LGPD ao mandar áudio de cliente para a IA (semana 3)
 - [x] Seletor "Ver como": "Vendas · região" no lugar de "Vendedor · região"
+- [x] Página de entrada (index) com o mesmo visual e tema das outras telas; a marca no topo volta para ela

@@ -105,6 +105,16 @@ export interface DadosVendedor {
 
 export type DadosPerfil = DadosFinanceiro | DadosVendedor;
 
+/** Página de entrada: só a lista de perfis, nenhum dado de cliente ou pedido. */
+export interface DadosInicio {
+  perfil: 'inicio';
+  dataReferencia: string;
+  perfis: PerfilDisponivel[];
+}
+
+/** O que uma página do build pode receber: um perfil ou a página de entrada. */
+export type DadosPagina = DadosPerfil | DadosInicio;
+
 // ---- Projeções --------------------------------------------------------------
 
 export const arquivoDoPerfil = (id: string) => (id === 'financeiro' ? 'financeiro.html' : `vendedor-${id.toLowerCase()}.html`);
@@ -116,6 +126,10 @@ export function listarPerfis(base: Base): PerfilDisponivel[] {
       .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
       .map((v) => ({ id: v.id, nome: v.nome, descricao: `Vendas · ${v.regiao}`, arquivo: arquivoDoPerfil(v.id) })),
   ];
+}
+
+export function projetarInicio(base: Base, dataReferencia: string): DadosInicio {
+  return { perfil: 'inicio', dataReferencia, perfis: listarPerfis(base) };
 }
 
 export function projetarFinanceiro(base: Base, dataReferencia: string): DadosFinanceiro {

@@ -2,7 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { type Anomalia, type Base, carregarBase, type DadosBrutos } from '../src/dominio/carregar';
 import { DATA_REFERENCIA } from '../src/dominio/config';
-import { type DadosPerfil, projetarFinanceiro, projetarVendedor } from '../src/dominio/visoes';
+import { type DadosPerfil, projetarFinanceiro, projetarInicio, projetarVendedor } from '../src/dominio/visoes';
 
 /**
  * Lê os JSONs do Sistemão (pasta dados/), valida, aplica a regra de crédito e
@@ -62,6 +62,8 @@ export function gravarTudo(): { base: Base; perfis: Map<string, DadosPerfil> } {
   for (const [id, dados] of perfis) {
     writeFileSync(resolve(destino, `${id}.json`), `${JSON.stringify(dados, null, 2)}\n`);
   }
+  // Página de entrada (tela/index.html): só a lista de perfis.
+  writeFileSync(resolve(destino, 'inicio.json'), `${JSON.stringify(projetarInicio(base, DATA_REFERENCIA), null, 2)}\n`);
   mkdirSync(resolve(raiz, 'docs'), { recursive: true });
   writeFileSync(resolve(raiz, 'docs/anomalias-dos-dados.md'), relatorioAnomalias(base.anomalias));
   return { base, perfis };

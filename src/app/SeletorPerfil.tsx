@@ -9,10 +9,10 @@ export function SeletorPerfil({ perfis, atual }: { perfis: PerfilDisponivel[]; a
   const vendedores = perfis.filter((p) => p.id !== 'financeiro');
 
   return (
-    <label className="seletor">
-      <span className="seletor__rotulo">Ver como</span>
+    <label className="controle">
+      <span className="controle__rotulo">Ver como</span>
       <select
-        className="seletor__campo"
+        className="controle__campo controle__campo--forte"
         value={atual}
         onChange={(e) => {
           const destino = perfis.find((p) => p.id === e.target.value);
@@ -22,14 +22,14 @@ export function SeletorPerfil({ perfis, atual }: { perfis: PerfilDisponivel[]; a
         <optgroup label="Financeiro">
           {financeiro.map((p) => (
             <option key={p.id} value={p.id}>
-              {p.nome} (Financeiro)
+              {p.nome} · Financeiro
             </option>
           ))}
         </optgroup>
         <optgroup label="Vendedores">
           {vendedores.map((p) => (
             <option key={p.id} value={p.id}>
-              {p.nome} ({p.descricao.replace('Vendedor · ', '')})
+              {p.nome} · {p.descricao.replace('Vendedor · ', '')}
             </option>
           ))}
         </optgroup>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Brilho Minas · Fila do financeiro</title>
+    <style>
+      :root { --fundo:#f5f6f8; --sup:#fff; --borda:#dde1e7; --texto:#1b2230; --suave:#5b6578; --marca:#0f5c8c; }
+      @media (prefers-color-scheme: dark) { :root { --fundo:#0f1419; --sup:#182029; --borda:#2e3a47; --texto:#e6eaf0; --suave:#9aa5b5; --marca:#6cb4e4; } }
+      body { margin:0; background:var(--fundo); color:var(--texto); font:16px/1.45 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; }
+      main { max-width:560px; margin:0 auto; padding:32px 16px; }
+      h1 { margin:0; color:var(--marca); font-size:1.5rem; }
+      p { color:var(--suave); }
+      ul { list-style:none; padding:0; display:grid; gap:8px; }
+      a { display:flex; justify-content:space-between; gap:12px; padding:14px 16px; min-height:44px; background:var(--sup); border:1px solid var(--borda); border-radius:10px; color:inherit; text-decoration:none; }
+      a:hover, a:focus-visible { border-color:var(--marca); }
+      a span { color:var(--suave); font-size:.9rem; text-align:right; }
+      small { color:var(--suave); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Brilho Minas</h1>
+      <p>Fila de liberação de pedidos. Escolha quem está olhando:</p>
+      <ul>
+        <li><a href="financeiro.html"><strong>Marta</strong><span>Financeiro</span></a></li>
+        <li><a href="vendedor-v01.html"><strong>Carlos Mendes</strong><span>Vendedor · Centro-Sul</span></a></li>
+        <li><a href="vendedor-v03.html"><strong>Diego Ramos</strong><span>Vendedor · Contagem</span></a></li>
+        <li><a href="vendedor-v04.html"><strong>Fernanda Souza</strong><span>Vendedor · Nova Lima</span></a></li>
+        <li><a href="vendedor-v06.html"><strong>Juliana Castro</strong><span>Vendedor · Savassi</span></a></li>
+        <li><a href="vendedor-v02.html"><strong>Patrícia Lopes</strong><span>Vendedor · Pampulha</span></a></li>
+        <li><a href="vendedor-v05.html"><strong>Rafael Teixeira</strong><span>Vendedor · Betim</span></a></li>
+      </ul>
+      <small>Protótipo sem login: na versão real, cada pessoa entra com o próprio acesso e só recebe os dados do seu perfil.</small>
+    </main>
+  </body>
+</html>

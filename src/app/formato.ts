@@ -14,3 +14,6 @@ const CANAIS: Record<string, string> = {
   email: 'E-mail',
 };
 export const formatarCanal = (canal: string) => CANAIS[canal] ?? canal;
+
+/** Versão curta, para a linha da fila. */
+export const formatarCanalCurto = (canal: string) => (canal === 'whatsapp_vendedor' ? 'WhatsApp' : formatarCanal(canal));

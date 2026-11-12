@@ -8,7 +8,12 @@ type Aba = 'pedidos' | 'clientes';
 const ORDEM_SITUACAO: Record<Sugestao, number> = { bloquear: 0, atencao: 1, liberar: 2 };
 
 export function VisaoVendedor({ dados }: { dados: DadosVendedor }) {
-  const [aba, setAba] = useState<Aba>('pedidos');
+  // A aba fica no endereço (#clientes) para dar para salvar um atalho direto.
+  const [aba, setAbaEstado] = useState<Aba>(() => (window.location.hash === '#clientes' ? 'clientes' : 'pedidos'));
+  const setAba = (nova: Aba) => {
+    setAbaEstado(nova);
+    window.history.replaceState(null, '', nova === 'clientes' ? '#clientes' : window.location.pathname);
+  };
   const primeiroNome = dados.vendedor.nome.split(' ')[0];
 
   // O que tem problema primeiro; dentro de cada situação, o mais recente.

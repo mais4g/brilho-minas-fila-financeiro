@@ -34,7 +34,7 @@ describe.each([...base.vendedores.keys()])('página do vendedor %s', (id) => {
       '.vendedor', '.vendedor.id', '.vendedor.nome', '.vendedor.regiao',
       '.pedidos', '.pedidos[].numero', '.pedidos[].criadoEm', '.pedidos[].cliente', '.pedidos[].status',
       '.pedidos[].rotuloStatus', '.pedidos[].itens', '.pedidos[].itens[].descricao', '.pedidos[].itens[].quantidade',
-      '.pedidos[].valor', '.pedidos[].situacao', '.pedidos[].situacao.sugestao', '.pedidos[].situacao.rotulo', '.pedidos[].situacao.texto',
+      '.pedidos[].valor', '.pedidos[].situacao', '.pedidos[].situacao.sugestao', '.pedidos[].situacao.rotulo', '.pedidos[].situacao.texto', '.pedidos[].aviso',
       '.clientes', '.clientes[].id', '.clientes[].razaoSocial', '.clientes[].cidade',
       '.clientes[].situacao', '.clientes[].situacao.sugestao', '.clientes[].situacao.rotulo', '.clientes[].situacao.texto',
     ]);

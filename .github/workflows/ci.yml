@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Tipos
+        run: npm run typecheck
+      - name: Testes (regra de crédito, dados reais, segurança por perfil)
+        run: npm test
+      - name: Build (um HTML por perfil)
+        run: npm run build
+      - name: A tela versionada está igual ao build
+        run: git diff --exit-code -- tela/ || (echo "Rode npm run build e faça commit da pasta tela/" && exit 1)

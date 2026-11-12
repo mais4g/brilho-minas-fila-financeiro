@@ -77,11 +77,17 @@ export function alertaFinanceiro(a: Alerta): string {
 
 export const ROTULO_SITUACAO_VENDEDOR: Record<Sugestao, string> = {
   liberar: 'Liberado',
-  atencao: 'Liberado, com atenção',
+  atencao: 'Atenção',
   bloquear: 'Bloqueado',
 };
 
-export type MotivoVendedor = 'em_dia' | 'cobrar_atraso' | 'pagamento_atrasado' | 'sem_credito_disponivel' | 'cadastro_incompleto';
+export type MotivoVendedor =
+  | 'em_dia'
+  | 'cobrar_atraso'
+  | 'pagamento_atrasado'
+  | 'sem_credito_disponivel'
+  | 'cadastro_incompleto'
+  | 'barrado_pelo_financeiro';
 
 /** Reduz os motivos do financeiro ao que o vendedor pode saber. */
 export function motivoParaVendedor(motivos: readonly Motivo[]): MotivoVendedor {
@@ -106,6 +112,7 @@ export const TEXTO_MOTIVO_VENDEDOR: Record<MotivoVendedor, string> = {
   pagamento_atrasado: 'O cliente tem pagamento atrasado. Combine a regularização com ele antes de prometer entrega.',
   sem_credito_disponivel: 'Este pedido passa do crédito disponível do cliente. Fale com o financeiro: talvez seja preciso reduzir o pedido ou pagar à vista.',
   cadastro_incompleto: 'O cadastro deste cliente está incompleto no financeiro. Fale com o financeiro.',
+  barrado_pelo_financeiro: 'O financeiro barrou este pedido. Fale com o financeiro para saber o que falta.',
 };
 
 /** Mesmo motivo, para a lista de clientes (antes de existir um pedido). */

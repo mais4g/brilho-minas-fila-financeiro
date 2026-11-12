@@ -1,7 +1,7 @@
 import type { Base } from './carregar';
 import type { Sugestao } from './credito';
 import type { StatusPedido } from './esquemas';
-import { analisarPedido, filaDoFinanceiro, STATUS_COM_CREDITO, situacaoDoCliente } from './fila';
+import { type AnalisePedido, analisarPedido, filaDoFinanceiro, STATUS_COM_CREDITO, situacaoDoCliente } from './fila';
 import {
   alertaFinanceiro,
   motivoFinanceiro,
@@ -83,6 +83,8 @@ export interface PedidoVendedor {
   valor: number;
   /** Só para pedidos que ainda dependem do financeiro. */
   situacao: SituacaoVendedor | null;
+  /** Aviso operacional (ex.: pedido possivelmente lançado duas vezes). */
+  aviso: string | null;
 }
 
 export interface ClienteVendedor {
@@ -155,6 +157,11 @@ function situacaoVendedor(
   return { sugestao, rotulo: ROTULO_SITUACAO_VENDEDOR[sugestao], texto: textos[motivoParaVendedor(motivos)] };
 }
 
+function avisoDuplicidade(analise: AnalisePedido | null): string | null {
+  const dup = analise?.alertas.find((a) => a.tipo === 'possivel_duplicado');
+  return dup ? `Parece o mesmo pedido que o ${dup.outroPedido}. Se foi enviado duas vezes, avise o comercial.` : null;
+}
+
 export function projetarVendedor(base: Base, vendedorId: string, dataReferencia: string): DadosVendedor {
   const vendedor = base.vendedores.get(vendedorId);
   if (!vendedor) throw new Error(`Vendedor ${vendedorId} não existe`);
@@ -178,7 +185,13 @@ export function projetarVendedor(base: Base, vendedorId: string, dataReferencia:
         rotuloStatus: ROTULO_STATUS[p.status],
         itens: p.itens.map((i) => ({ descricao: i.descricao, quantidade: i.quantidade })),
         valor: p.valor_total,
-        situacao: analise ? situacaoVendedor(analise.credito.sugestao, analise.credito.motivos) : null,
+        situacao: !analise
+          ? null
+          : p.status === 'bloqueado_financeiro' && analise.credito.sugestao !== 'bloquear'
+            ? // A decisão da Marta vale mais que a sugestão da regra.
+              { sugestao: 'bloquear', rotulo: ROTULO_SITUACAO_VENDEDOR.bloquear, texto: TEXTO_MOTIVO_VENDEDOR.barrado_pelo_financeiro }
+            : situacaoVendedor(analise.credito.sugestao, analise.credito.motivos),
+        aviso: avisoDuplicidade(analise),
       };
     });
 
